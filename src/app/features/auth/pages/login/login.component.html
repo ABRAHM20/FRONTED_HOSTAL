@@ -1,0 +1,20 @@
+<section class="card">
+  <h1>Bienvenido</h1>
+  <p>Inicia sesion para continuar.</p>
+
+  <form class="form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Correo
+      <input type="email" placeholder="correo@empresa.com" formControlName="email" />
+    </label>
+    <label>
+      Contrasena
+      <input type="password" placeholder="********" formControlName="password" />
+    </label>
+    <button type="submit" [disabled]="form.invalid || loading">Entrar</button>
+  </form>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <a routerLink="/auth/register">Crear cuenta</a>
+</section>
