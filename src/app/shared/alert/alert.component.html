@@ -1,0 +1,10 @@
+<div class="alert-stack" *ngIf="(alertService.alerts | async) as alerts">
+  <div
+    *ngFor="let alert of alerts; trackBy: trackById"
+    class="alert"
+    [ngClass]="alert.type"
+  >
+    <span>{{ alert.text }}</span>
+    <button type="button" class="close" (click)="alertService.remove(alert.id)">✕</button>
+  </div>
+</div>

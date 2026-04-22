@@ -1,21 +1,99 @@
-<section class="page">
-  <header>
-    <h1>Usuarios</h1>
-    <a routerLink="/users/create" class="primary">Nuevo usuario</a>
-  </header>
-
-  <div class="table">
-    <div class="row header">
-      <span>Nombre</span>
-      <span>Rol</span>
-      <span>Estado</span>
-      <span></span>
-    </div>
-    <div class="row">
-      <span>Maria Torres</span>
-      <span>Admin</span>
-      <span>Activo</span>
-      <a routerLink="/users/1/edit">Editar</a>
-    </div>
+<div class="users-container">
+  <div class="users-header">
+    <h1>Gestión de Usuarios</h1>
+    <button class="btn-primary" (click)="openCreateModal()" [disabled]="loading">
+      + Crear Usuario
+    </button>
   </div>
-</section>
+
+  <div *ngIf="error" class="error-alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando usuarios...
+  </div>
+
+  <div *ngIf="!loading && users.length === 0" class="empty-state">
+    <p>No hay usuarios creados</p>
+  </div>
+
+  <div *ngIf="!loading && users.length > 0" class="users-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <div class="roles-list">
+              <span *ngFor="let role of user.roles" class="role-badge">
+                {{ role.name }}
+              </span>
+              <span *ngIf="!user.roles || user.roles.length === 0" class="role-badge empty">
+                Sin rol
+              </span>
+            </div>
+          </td>
+          <td>
+            <span *ngIf="user.is_active" class="badge badge-active">Activo</span>
+            <span *ngIf="!user.is_active" class="badge badge-inactive">Inactivo</span>
+          </td>
+          <td class="actions">
+            <button class="btn-sm btn-secondary" (click)="openEditModal(user)">
+              ✏️ Editar
+            </button>
+            <button 
+              class="btn-sm" 
+              [class.btn-warning]="user.is_active"
+              [class.btn-success]="!user.is_active"
+              (click)="toggleUserActive(user)"
+            >
+              {{ user.is_active ? '🔒 Desactivar' : '🔓 Activar' }}
+            </button>
+            <button class="btn-sm btn-danger" (click)="deleteUser(user)">
+              🗑️ Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && total > limit" class="pagination">
+    <button 
+      class="btn-sm" 
+      (click)="previousPage()" 
+      [disabled]="skip === 0"
+    >
+      ← Anterior
+    </button>
+    <span class="pagination-info">
+      Página {{ (skip / limit) + 1 }} de {{ Math.ceil(total / limit) }}
+    </span>
+    <button 
+      class="btn-sm" 
+      (click)="nextPage()" 
+      [disabled]="skip + limit >= total"
+    >
+      Siguiente →
+    </button>
+  </div>
+</div>
+
+<!-- User Modal (Create/Edit) -->
+<app-user-modal
+  *ngIf="showUserModal"
+  [user]="editingUser"
+  (close)="closeUserModal()"
+  (save)="onUserSaved()"
+></app-user-modal>
+

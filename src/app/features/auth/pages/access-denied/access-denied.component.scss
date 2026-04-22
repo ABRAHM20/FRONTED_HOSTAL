@@ -1,0 +1,107 @@
+.access-denied-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 20px;
+}
+
+.access-denied-content {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 60px 40px;
+  max-width: 500px;
+  backdrop-filter: blur(10px);
+  animation: slideIn 0.3s ease-out;
+
+  .icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    display: inline-block;
+    animation: bounce 0.6s ease-out;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #ff6b6b;
+    font-weight: 600;
+  }
+
+  p {
+    color: #b0b0b0;
+    margin-bottom: 8px;
+    font-size: 16px;
+
+    &.description {
+      color: #808080;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      &.btn-primary {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+      }
+
+      &.btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #b0b0b0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+          color: #f5f2ed;
+          border-color: rgba(255, 255, 255, 0.3);
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

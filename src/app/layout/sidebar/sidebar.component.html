@@ -1,5 +1,28 @@
 <aside class="sidebar">
-  <div class="section-title">Dashboard</div>
-  <a routerLink="/users">Usuarios</a>
-  <a routerLink="/users/create">Crear usuario</a>
+  <div class="section-title">Navegación</div>
+  
+  <div class="nav-section" *ngIf="canViewUsers()">
+    <div class="nav-section-title">Gestión</div>
+    <a routerLink="/users" class="nav-item">
+      <span class="icon">👤</span>
+      <span>Lista de Usuarios</span>
+    </a>
+  </div>
+
+  <div class="nav-section" *ngIf="canViewRoles()">
+    <div class="nav-section-title">Configuración</div>
+    <a routerLink="/roles" class="nav-item">
+      <span class="icon">🔐</span>
+      <span>Gestionar Roles</span>
+    </a>
+  </div>
+
+  <!-- Vista básica si no tiene ningún permiso de gestión -->
+  <div class="nav-section" *ngIf="!canViewUsers() && !canViewRoles()">
+    <div class="nav-section-title">Acceso</div>
+    <div class="nav-item disabled">
+      <span class="icon">🏠</span>
+      <span>Inicio (Sin permisos)</span>
+    </div>
+  </div>
 </aside>

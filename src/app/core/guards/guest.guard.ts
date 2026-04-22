@@ -10,9 +10,18 @@ export class GuestGuard implements CanActivate, CanActivateChild {
   constructor(private tokenService: TokenService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    return this.tokenService.hasAccessToken()
-      ? this.router.createUrlTree(['/'])
-      : true;
+    try {
+      const hasToken = this.tokenService.hasAccessToken();
+      if (hasToken) {
+        console.log('✅ Usuario ya autenticado, redirigiendo al dashboard');
+        return this.router.createUrlTree(['/']);
+      }
+      console.log('✅ Usuario no autenticado, permitiendo acceso a login');
+      return true;
+    } catch (error) {
+      console.error('Error en GuestGuard:', error);
+      return true;
+    }
   }
 
   canActivateChild(): boolean | UrlTree {

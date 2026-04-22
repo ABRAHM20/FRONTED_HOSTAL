@@ -1,0 +1,72 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Gestionar Permisos - {{ role.name }}</h2>
+      <button class="btn-close" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="error" class="error-alert">
+        {{ error }}
+      </div>
+
+      <div class="permissions-controls">
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Buscar permisos..."
+          class="search-input"
+        />
+      </div>
+
+      <div *ngIf="loading" class="loading">
+        Cargando permisos...
+      </div>
+
+      <div *ngIf="!loading && permissions.length === 0" class="empty-state">
+        <p>No hay permisos disponibles</p>
+      </div>
+
+      <div *ngIf="!loading && permissions.length > 0" class="permissions-list">
+        <div *ngFor="let resource of getGroupedPermissions() | keyvalue" class="resource-group">
+          <div class="resource-header" (click)="toggleResourceExpand(resource.key)">
+            <span class="resource-name">{{ resource.key }}</span>
+            <span class="expand-icon" [class.expanded]="isResourceExpanded(resource.key)">▼</span>
+          </div>
+
+          <div *ngIf="isResourceExpanded(resource.key)" class="permissions-group">
+            <div 
+              *ngFor="let permission of resource.value" 
+              class="permission-item"
+              [class.assigned]="permission.assigned"
+              [class.not-assigned]="!permission.assigned"
+              (click)="togglePermission(permission)"
+            >
+              <div class="permission-checkbox">
+                <span 
+                  class="checkbox-custom"
+                  [class.checked]="permission.assigned"
+                ></span>
+                <span class="permission-label">
+                  <span class="permission-name">{{ permission.name }}</span>
+                  <span *ngIf="permission.display_name" class="permission-display">
+                    {{ permission.display_name }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="onClose()" [disabled]="saving">
+        Cerrar
+      </button>
+      <button class="btn-primary" (click)="onSave()" [disabled]="saving">
+        {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditing ? 'Editar Rol' : 'Crear Nuevo Rol' }}</h2>
+      <button class="btn-close" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="error" class="error-alert">
+        {{ error }}
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Nombre del Rol *</label>
+          <input
+            id="name"
+            type="text"
+            [(ngModel)]="formData.name"
+            name="name"
+            placeholder="ej. Moderador"
+            required
+            [disabled]="loading"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descripción</label>
+          <textarea
+            id="description"
+            [(ngModel)]="formData.description"
+            name="description"
+            placeholder="Descripción del rol"
+            [disabled]="loading"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="onClose()" [disabled]="loading">
+            Cancelar
+          </button>
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            {{ loading ? 'Guardando...' : 'Guardar Rol' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

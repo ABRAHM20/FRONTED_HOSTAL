@@ -1,0 +1,74 @@
+<div class="roles-container">
+  <div class="roles-header">
+    <h1>Gestión de Roles</h1>
+    <button class="btn-primary" (click)="openCreateModal()" [disabled]="loading">
+      + Crear Rol
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error-alert">
+    {{ error }}
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    Cargando roles...
+  </div>
+
+  <div *ngIf="!loading && roles.length === 0" class="empty-state">
+    <p>No hay roles creados</p>
+  </div>
+
+  <div *ngIf="!loading && roles.length > 0" class="roles-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Sistema</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of roles">
+          <td>{{ role.name }}</td>
+          <td>{{ role.description || '-' }}</td>
+          <td>
+            <span *ngIf="role.is_system" class="badge badge-system">Sí</span>
+            <span *ngIf="!role.is_system" class="badge badge-custom">No</span>
+          </td>
+          <td class="actions">
+            <button class="btn-sm btn-secondary" (click)="openEditModal(role)">
+              ✏️ Editar
+            </button>
+            <button class="btn-sm btn-info" (click)="openPermissionsModal(role)">
+              🔐 Permisos
+            </button>
+            <button
+              *ngIf="!role.is_system"
+              class="btn-sm btn-danger"
+              (click)="deleteRole(role)"
+            >
+              🗑️ Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Role Modal (Create/Edit) -->
+<app-role-modal
+  *ngIf="showRoleModal"
+  [role]="editingRole"
+  (close)="closeRoleModal()"
+  (save)="onRoleSaved()"
+></app-role-modal>
+
+<!-- Role Permissions Modal -->
+<app-role-permissions-modal
+  *ngIf="showPermissionsModal && selectedRoleForPermissions"
+  [role]="selectedRoleForPermissions"
+  (close)="closePermissionsModal()"
+  (save)="onPermissionsSaved()"
+></app-role-permissions-modal>

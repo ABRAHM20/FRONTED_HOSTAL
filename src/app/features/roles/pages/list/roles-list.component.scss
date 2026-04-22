@@ -1,4 +1,4 @@
-.users-container {
+.roles-container {
   padding: 24px;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   border-radius: 12px;
@@ -6,7 +6,7 @@
   min-height: 100vh;
 }
 
-.users-header {
+.roles-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -27,8 +27,7 @@
 .btn-primary,
 .btn-sm,
 .btn-secondary,
-.btn-warning,
-.btn-success,
+.btn-info,
 .btn-danger {
   padding: 10px 16px;
   border: none;
@@ -67,16 +66,10 @@
   border: 1px solid #4facfe;
 }
 
-.btn-warning {
-  background: rgba(255, 159, 64, 0.2);
-  color: #ff9f40;
-  border: 1px solid #ff9f40;
-}
-
-.btn-success {
-  background: rgba(46, 213, 115, 0.2);
-  color: #2ed573;
-  border: 1px solid #2ed573;
+.btn-info {
+  background: rgba(0, 242, 254, 0.2);
+  color: #00f2fe;
+  border: 1px solid #00f2fe;
 }
 
 .btn-danger {
@@ -107,7 +100,7 @@
   font-size: 16px;
 }
 
-.users-table {
+.roles-table {
   overflow-x: auto;
 
   table {
@@ -149,27 +142,6 @@
   flex-wrap: wrap;
 }
 
-.roles-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.role-badge {
-  display: inline-block;
-  background: rgba(0, 242, 254, 0.2);
-  color: #00f2fe;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-
-  &.empty {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(245, 242, 237, 0.5);
-  }
-}
-
 .badge {
   display: inline-block;
   padding: 4px 8px;
@@ -177,49 +149,13 @@
   font-size: 12px;
   font-weight: 500;
 
-  &.badge-active {
-    background: rgba(46, 213, 115, 0.2);
-    color: #2ed573;
-  }
-
-  &.badge-inactive {
-    background: rgba(255, 71, 87, 0.2);
-    color: #ff4757;
-  }
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 24px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-
-  .pagination-info {
-    font-size: 14px;
-    color: rgba(245, 242, 237, 0.7);
-  }
-
-  button {
-    padding: 8px 12px;
+  &.badge-system {
     background: rgba(79, 172, 254, 0.2);
     color: #4facfe;
-    border: 1px solid #4facfe;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s ease;
+  }
 
-    &:hover:not(:disabled) {
-      background: rgba(79, 172, 254, 0.3);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+  &.badge-custom {
+    background: rgba(0, 242, 254, 0.2);
+    color: #00f2fe;
   }
 }

@@ -10,9 +10,18 @@ export class AuthGuard implements CanActivate, CanActivateChild {
   constructor(private tokenService: TokenService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-    return this.tokenService.hasAccessToken()
-      ? true
-      : this.router.createUrlTree(['/auth/login']);
+    try {
+      const hasToken = this.tokenService.hasAccessToken();
+      if (hasToken) {
+        console.log('✅ Usuario autenticado, acceso permitido');
+        return true;
+      }
+      console.log('❌ No hay token, redirigiendo a login');
+      return this.router.createUrlTree(['/auth/login']);
+    } catch (error) {
+      console.error('Error en AuthGuard:', error);
+      return this.router.createUrlTree(['/auth/login']);
+    }
   }
 
   canActivateChild(): boolean | UrlTree {
