@@ -1,0 +1,30 @@
+@use '../../../../../styles/hotel-shared';
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.badge-pay-pending   { background: #fef3c7; color: #92400e; }
+.badge-pay-completed { background: #d1fae5; color: #065f46; }
+.badge-pay-failed    { background: #fee2e2; color: #991b1b; }
+.badge-pay-cancelled { background: #f3f4f6; color: #6b7280; }
+
+.type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+.type-initial { background: #ede9fe; color: #7c3aed; }
+.type-partial { background: #fff7ed; color: #c2410c; }
+.type-full    { background: #d1fae5; color: #065f46; }
+.type-extra   { background: #fef3c7; color: #92400e; }
+
+.stat-card.revenue {
+  border-top: 3px solid #6366f1;
+  .stat-num { font-size: 1.35rem; }
+}

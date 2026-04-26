@@ -17,8 +17,32 @@
     </a>
   </div>
 
+  <div class="nav-section" *ngIf="canViewRooms() || canViewStays()">
+    <div class="nav-section-title">Hotel</div>
+    <a routerLink="/rooms" class="nav-item" *ngIf="canViewRooms()">
+      <span class="icon">🏨</span>
+      <span>Habitaciones</span>
+    </a>
+    <a routerLink="/stays" class="nav-item" *ngIf="canViewStays()">
+      <span class="icon">🛏️</span>
+      <span>Hospedajes</span>
+    </a>
+  </div>
+
+  <div class="nav-section" *ngIf="canViewServices() || canViewPayments()">
+    <div class="nav-section-title">Servicios y Pagos</div>
+    <a routerLink="/services" class="nav-item" *ngIf="canViewServices()">
+      <span class="icon">🍽️</span>
+      <span>Servicios</span>
+    </a>
+    <a routerLink="/payments" class="nav-item" *ngIf="canViewPayments()">
+      <span class="icon">💳</span>
+      <span>Pagos</span>
+    </a>
+  </div>
+
   <!-- Vista básica si no tiene ningún permiso de gestión -->
-  <div class="nav-section" *ngIf="!canViewUsers() && !canViewRoles()">
+  <div class="nav-section" *ngIf="!canViewUsers() && !canViewRoles() && !canViewRooms() && !canViewStays() && !canViewServices() && !canViewPayments()">
     <div class="nav-section-title">Acceso</div>
     <div class="nav-item disabled">
       <span class="icon">🏠</span>

@@ -1,0 +1,166 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">🛏️ Hospedajes</h1>
+      <p class="page-subtitle">Gestión de alquileres y check-in/check-out</p>
+    </div>
+    <div class="header-actions">
+      <select class="form-control" [(ngModel)]="filterStatus" (change)="applyFilter()" style="min-width:140px;">
+        <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+      </select>
+      <button class="btn btn-primary" (click)="openCreate()">+ Nuevo Hospedaje</button>
+    </div>
+  </div>
+
+  <div class="toast success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ stays.length }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card occupied">
+      <span class="stat-num">{{ activeCount }}</span>
+      <span class="stat-label">Activos</span>
+    </div>
+    <div class="stat-card available">
+      <span class="stat-num">{{ pendingCount }}</span>
+      <span class="stat-label">Pendientes</span>
+    </div>
+    <div class="stat-card revenue">
+      <span class="stat-num">$ {{ totalRevenue | number:'1.0-0' }}</span>
+      <span class="stat-label">Recaudado</span>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div><p>Cargando...</p>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="data-table" *ngIf="stays.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Habitación</th>
+          <th>Entrada</th>
+          <th>Salida</th>
+          <th>Estado</th>
+          <th>Pago</th>
+          <th>Total</th>
+          <th>Pagado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stay of stays">
+          <td><strong>{{ stay.id }}</strong></td>
+          <td>{{ getRoomNumber(stay.room_id) }}</td>
+          <td>{{ stay.check_in_at ? (stay.check_in_at | date:'dd/MM HH:mm') : '-' }}</td>
+          <td>{{ stay.check_out_at ? (stay.check_out_at | date:'dd/MM HH:mm') : '-' }}</td>
+          <td>
+            <span class="badge" [class]="'badge-' + stay.status">{{ statusMap[stay.status] }}</span>
+          </td>
+          <td>
+            <span class="badge" [class]="'badge-pay-' + stay.payment_status">{{ paymentStatusMap[stay.payment_status] }}</span>
+          </td>
+          <td><strong>$ {{ stay.total_price | number:'1.0-0' }}</strong></td>
+          <td>$ {{ stay.amount_paid | number:'1.0-0' }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon" (click)="checkIn(stay)" *ngIf="stay.status === 'pending'" title="Check-in">✅</button>
+            <button class="btn-icon" (click)="checkOut(stay)" *ngIf="stay.status === 'active'" title="Check-out">🏁</button>
+            <button class="btn-icon edit" (click)="openEdit(stay)" title="Editar">✏️</button>
+            <button class="btn-icon delete" (click)="deleteStay(stay)" title="Cancelar">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>
+      <div class="empty-state">
+        <span class="empty-icon">🛏️</span>
+        <p>No hay hospedajes registrados</p>
+        <button class="btn btn-primary" (click)="openCreate()">Crear primer hospedaje</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeCreate()"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-header">
+    <h2>Nuevo Hospedaje</h2>
+    <button class="modal-close" (click)="closeCreate()">✕</button>
+  </div>
+  <form [formGroup]="stayForm" (ngSubmit)="submitCreate()" class="modal-body">
+    <div class="form-group">
+      <label>Habitación *</label>
+      <select formControlName="room_id" class="form-control">
+        <option value="">Seleccionar habitación disponible...</option>
+        <option *ngFor="let room of rooms" [value]="room.id">{{ room.room_number }} - {{ room.room_plan?.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Plan ID *</label>
+      <input type="number" formControlName="room_plan_id" class="form-control" placeholder="ID del plan" />
+    </div>
+    <div class="form-group">
+      <label>Tarifa ID *</label>
+      <input type="number" formControlName="rate_id" class="form-control" placeholder="ID de la tarifa" />
+    </div>
+    <div class="form-group">
+      <label>Fecha/Hora Check-in</label>
+      <input type="datetime-local" formControlName="check_in_at" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <textarea formControlName="notes" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeCreate()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="stayForm.invalid || submitting">
+        {{ submitting ? 'Creando...' : 'Crear Hospedaje' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<div class="modal-backdrop" *ngIf="showEditModal" (click)="closeEdit()"></div>
+<div class="modal" *ngIf="showEditModal">
+  <div class="modal-header">
+    <h2>Editar Hospedaje #{{ editingStay?.id }}</h2>
+    <button class="modal-close" (click)="closeEdit()">✕</button>
+  </div>
+  <form [formGroup]="editForm" (ngSubmit)="submitEdit()" class="modal-body">
+    <div class="form-group">
+      <label>Estado</label>
+      <select formControlName="status" class="form-control">
+        <option value="pending">Pendiente</option>
+        <option value="active">Activo</option>
+        <option value="finished">Finalizado</option>
+        <option value="cancelled">Cancelado</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Estado de Pago</label>
+      <select formControlName="payment_status" class="form-control">
+        <option value="pending">Pendiente</option>
+        <option value="partial">Parcial</option>
+        <option value="paid">Pagado</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Fecha/Hora Check-out</label>
+      <input type="datetime-local" formControlName="check_out_at" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <textarea formControlName="notes" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeEdit()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting">
+        {{ submitting ? 'Guardando...' : 'Actualizar' }}
+      </button>
+    </div>
+  </form>
+</div>

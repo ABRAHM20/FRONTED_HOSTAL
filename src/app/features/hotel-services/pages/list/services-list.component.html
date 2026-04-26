@@ -1,0 +1,105 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">🍽️ Servicios del Hotel</h1>
+      <p class="page-subtitle">Catálogo de servicios adicionales disponibles</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openCreate()">+ Nuevo Servicio</button>
+    </div>
+  </div>
+
+  <div class="toast success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ services.length }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card available">
+      <span class="stat-num">{{ activeCount }}</span>
+      <span class="stat-label">Activos</span>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div><p>Cargando...</p>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="data-table" *ngIf="services.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Categoría</th>
+          <th>Descripción</th>
+          <th>Precio</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let service of services">
+          <td><strong>{{ service.name }}</strong></td>
+          <td>
+            <span class="category-badge" *ngIf="service.category">{{ service.category }}</span>
+            <span *ngIf="!service.category" style="color:#9ca3af">-</span>
+          </td>
+          <td class="notes-cell">{{ service.description || '-' }}</td>
+          <td><strong>$ {{ service.price | number:'1.2-2' }}</strong></td>
+          <td>
+            <button class="toggle-btn" [class.active]="service.active" (click)="toggleActive(service)">
+              {{ service.active ? '✅ Activo' : '⏸ Inactivo' }}
+            </button>
+          </td>
+          <td class="actions-cell">
+            <button class="btn-icon edit" (click)="openEdit(service)" title="Editar">✏️</button>
+            <button class="btn-icon delete" (click)="deleteService(service)" title="Eliminar">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>
+      <div class="empty-state">
+        <span class="empty-icon">🍽️</span>
+        <p>No hay servicios registrados</p>
+        <button class="btn btn-primary" (click)="openCreate()">Crear primer servicio</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-header">
+    <h2>{{ editingService ? 'Editar' : 'Nuevo' }} Servicio</h2>
+    <button class="modal-close" (click)="closeModal()">✕</button>
+  </div>
+  <form [formGroup]="serviceForm" (ngSubmit)="submit()" class="modal-body">
+    <div class="form-group">
+      <label>Nombre *</label>
+      <input type="text" formControlName="name" class="form-control" placeholder="Ej: Desayuno, Masaje, Lavandería" />
+    </div>
+    <div class="form-group">
+      <label>Categoría</label>
+      <select formControlName="category" class="form-control">
+        <option value="">Sin categoría</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Precio *</label>
+      <input type="number" formControlName="price" class="form-control" min="0" step="0.01" placeholder="0.00" />
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea formControlName="description" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="serviceForm.invalid || submitting">
+        {{ submitting ? 'Guardando...' : (editingService ? 'Actualizar' : 'Crear') }}
+      </button>
+    </div>
+  </form>
+</div>

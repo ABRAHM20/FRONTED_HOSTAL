@@ -30,6 +30,30 @@ export const appRoutes: Routes = [
         data: { permissions: ['view.roles', 'roles.view'] },
         loadChildren: () => import('./features/roles/roles.routes').then((m) => m.rolesRoutes),
       },
+      {
+        path: 'rooms',
+        canActivate: [PermissionGuard],
+        data: { permissions: ['view.habitaciones'] },
+        loadChildren: () => import('./features/rooms/rooms.routes').then((m) => m.roomsRoutes),
+      },
+      {
+        path: 'stays',
+        canActivate: [PermissionGuard],
+        data: { permissions: ['view.hospedajes'] },
+        loadChildren: () => import('./features/stays/stays.routes').then((m) => m.staysRoutes),
+      },
+      {
+        path: 'services',
+        canActivate: [PermissionGuard],
+        data: { permissions: ['view.servicios'] },
+        loadChildren: () => import('./features/hotel-services/hotel-services.routes').then((m) => m.hotelServicesRoutes),
+      },
+      {
+        path: 'payments',
+        canActivate: [PermissionGuard],
+        data: { permissions: ['view.pagos'] },
+        loadChildren: () => import('./features/payments/payments.routes').then((m) => m.paymentsRoutes),
+      },
     ],
   },
   {

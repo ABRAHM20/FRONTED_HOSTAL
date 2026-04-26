@@ -1,0 +1,28 @@
+@use '../../../../../styles/hotel-shared';
+
+.category-badge {
+  background: #ede9fe;
+  color: #7c3aed;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+  transition: all 0.2s;
+
+  &.active {
+    background: #d1fae5;
+    color: #065f46;
+    border-color: #6ee7b7;
+  }
+}

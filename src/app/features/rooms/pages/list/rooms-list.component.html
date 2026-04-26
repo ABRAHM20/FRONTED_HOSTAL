@@ -1,0 +1,246 @@
+<div class="page-wrapper">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">🏨 Habitaciones</h1>
+      <p class="page-subtitle">Gestión de habitaciones, tipos y planes</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="openCreateType()">+ Tipo</button>
+      <button class="btn btn-secondary" (click)="openCreatePlan()">+ Plan</button>
+      <button class="btn btn-primary" (click)="openCreateRoom()">+ Nueva Habitación</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ rooms.length }}</span>
+      <span class="stat-label">Total</span>
+    </div>
+    <div class="stat-card available">
+      <span class="stat-num">{{ filteredRoomsAvailable }}</span>
+      <span class="stat-label">Disponibles</span>
+    </div>
+    <div class="stat-card occupied">
+      <span class="stat-num">{{ filteredRoomsOccupied }}</span>
+      <span class="stat-label">Ocupadas</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ roomTypes.length }}</span>
+      <span class="stat-label">Tipos</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ roomPlans.length }}</span>
+      <span class="stat-label">Planes</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'rooms'" (click)="activeTab = 'rooms'">Habitaciones</button>
+    <button class="tab" [class.active]="activeTab === 'types'" (click)="activeTab = 'types'">Tipos</button>
+    <button class="tab" [class.active]="activeTab === 'plans'" (click)="activeTab = 'plans'">Planes</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Rooms Table -->
+  <div class="table-container" *ngIf="!loading && activeTab === 'rooms'">
+    <table class="data-table" *ngIf="rooms.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>Habitación</th>
+          <th>Piso</th>
+          <th>Plan</th>
+          <th>Estado</th>
+          <th>Notas</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let room of rooms">
+          <td><strong>{{ room.room_number }}</strong></td>
+          <td>{{ room.floor ?? '-' }}</td>
+          <td>{{ getPlanName(room.room_plan_id) }}</td>
+          <td>
+            <select class="status-select" [value]="room.status"
+              (change)="changeStatus(room, $any($event.target).value)">
+              <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </td>
+          <td class="notes-cell">{{ room.notes || '-' }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon edit" (click)="openEditRoom(room)" title="Editar">✏️</button>
+            <button class="btn-icon delete" (click)="deleteRoom(room)" title="Eliminar">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>
+      <div class="empty-state">
+        <span class="empty-icon">🏨</span>
+        <p>No hay habitaciones registradas</p>
+        <button class="btn btn-primary" (click)="openCreateRoom()">Crear primera habitación</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Types Table -->
+  <div class="table-container" *ngIf="!loading && activeTab === 'types'">
+    <table class="data-table" *ngIf="roomTypes.length > 0; else noDataTypes">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let type of roomTypes">
+          <td>{{ type.id }}</td>
+          <td><strong>{{ type.name }}</strong></td>
+          <td>{{ type.description || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noDataTypes>
+      <div class="empty-state">
+        <span class="empty-icon">🏷️</span>
+        <p>No hay tipos de habitación</p>
+        <button class="btn btn-primary" (click)="openCreateType()">Crear tipo</button>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Plans Table -->
+  <div class="table-container" *ngIf="!loading && activeTab === 'plans'">
+    <table class="data-table" *ngIf="roomPlans.length > 0; else noDataPlans">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let plan of roomPlans">
+          <td>{{ plan.id }}</td>
+          <td><strong>{{ plan.name }}</strong></td>
+          <td>{{ getTypeName(plan.room_type_id) }}</td>
+          <td>{{ plan.description || '-' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noDataPlans>
+      <div class="empty-state">
+        <span class="empty-icon">📋</span>
+        <p>No hay planes de habitación</p>
+        <button class="btn btn-primary" (click)="openCreatePlan()">Crear plan</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" *ngIf="modalMode !== 'none'" (click)="closeModal()"></div>
+
+<!-- Modal: Create/Edit Room -->
+<div class="modal" *ngIf="modalMode === 'createRoom' || modalMode === 'editRoom'">
+  <div class="modal-header">
+    <h2>{{ editingRoom ? 'Editar' : 'Nueva' }} Habitación</h2>
+    <button class="modal-close" (click)="closeModal()">✕</button>
+  </div>
+  <form [formGroup]="roomForm" (ngSubmit)="submitRoom()" class="modal-body">
+    <div class="form-group">
+      <label>Número / Nombre *</label>
+      <input type="text" formControlName="room_number" placeholder="Ej: 101, Suite A" class="form-control"
+        [class.invalid]="roomForm.get('room_number')?.invalid && roomForm.get('room_number')?.touched" />
+    </div>
+    <div class="form-group">
+      <label>Plan de Habitación *</label>
+      <select formControlName="room_plan_id" class="form-control"
+        [class.invalid]="roomForm.get('room_plan_id')?.invalid && roomForm.get('room_plan_id')?.touched">
+        <option value="">Seleccione un plan...</option>
+        <option *ngFor="let plan of roomPlans" [value]="plan.id">{{ plan.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Piso</label>
+      <input type="number" formControlName="floor" placeholder="Ej: 1" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <textarea formControlName="notes" rows="3" placeholder="Notas adicionales..." class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="roomForm.invalid || submitting">
+        {{ submitting ? 'Guardando...' : (editingRoom ? 'Actualizar' : 'Crear') }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal: Create Type -->
+<div class="modal" *ngIf="modalMode === 'createType'">
+  <div class="modal-header">
+    <h2>Nuevo Tipo de Habitación</h2>
+    <button class="modal-close" (click)="closeModal()">✕</button>
+  </div>
+  <form [formGroup]="typeForm" (ngSubmit)="submitType()" class="modal-body">
+    <div class="form-group">
+      <label>Nombre *</label>
+      <input type="text" formControlName="name" placeholder="Ej: Suite, Estándar, Deluxe" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea formControlName="description" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="typeForm.invalid || submitting">
+        {{ submitting ? 'Guardando...' : 'Crear Tipo' }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal: Create Plan -->
+<div class="modal" *ngIf="modalMode === 'createPlan'">
+  <div class="modal-header">
+    <h2>Nuevo Plan de Habitación</h2>
+    <button class="modal-close" (click)="closeModal()">✕</button>
+  </div>
+  <form [formGroup]="planForm" (ngSubmit)="submitPlan()" class="modal-body">
+    <div class="form-group">
+      <label>Tipo de Habitación *</label>
+      <select formControlName="room_type_id" class="form-control">
+        <option value="">Seleccione tipo...</option>
+        <option *ngFor="let type of roomTypes" [value]="type.id">{{ type.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nombre del Plan *</label>
+      <input type="text" formControlName="name" placeholder="Ej: Plan Diario, Plan Hora" class="form-control" />
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea formControlName="description" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="planForm.invalid || submitting">
+        {{ submitting ? 'Guardando...' : 'Crear Plan' }}
+      </button>
+    </div>
+  </form>
+</div>

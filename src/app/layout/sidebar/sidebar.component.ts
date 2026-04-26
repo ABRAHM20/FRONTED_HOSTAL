@@ -57,6 +57,38 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Verifica si el usuario tiene permiso para ver habitaciones
+   */
+  canViewRooms(): boolean {
+    if (!this.currentUser) return false;
+    return this.hasPermissionContaining(['habitaciones']);
+  }
+
+  /**
+   * Verifica si el usuario tiene permiso para ver hospedajes
+   */
+  canViewStays(): boolean {
+    if (!this.currentUser) return false;
+    return this.hasPermissionContaining(['hospedajes', 'estadias']);
+  }
+
+  /**
+   * Verifica si el usuario tiene permiso para ver servicios
+   */
+  canViewServices(): boolean {
+    if (!this.currentUser) return false;
+    return this.hasPermissionContaining(['servicios']);
+  }
+
+  /**
+   * Verifica si el usuario tiene permiso para ver pagos
+   */
+  canViewPayments(): boolean {
+    if (!this.currentUser) return false;
+    return this.hasPermissionContaining(['pagos']);
+  }
+
+  /**
    * Verifica si el usuario tiene algún permiso que contenga las palabras clave
    */
   private hasPermissionContaining(keywords: string[]): boolean {

@@ -1,0 +1,120 @@
+<div class="page-wrapper">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">💳 Pagos</h1>
+      <p class="page-subtitle">Registro y seguimiento de transacciones</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openCreate()">+ Registrar Pago</button>
+    </div>
+  </div>
+
+  <div class="toast success" *ngIf="successMsg">✅ {{ successMsg }}</div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ payments.length }}</span>
+      <span class="stat-label">Total Registros</span>
+    </div>
+    <div class="stat-card available">
+      <span class="stat-num">{{ completedCount }}</span>
+      <span class="stat-label">Completados</span>
+    </div>
+    <div class="stat-card revenue">
+      <span class="stat-num">$ {{ totalCompleted | number:'1.0-0' }}</span>
+      <span class="stat-label">Total Recaudado</span>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div><p>Cargando...</p>
+  </div>
+
+  <div class="table-container" *ngIf="!loading">
+    <table class="data-table" *ngIf="payments.length > 0; else noData">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Hospedaje</th>
+          <th>Tipo</th>
+          <th>Monto</th>
+          <th>Método</th>
+          <th>Estado</th>
+          <th>Referencia</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payment of payments">
+          <td><strong>{{ payment.id }}</strong></td>
+          <td>#{{ payment.stay_id }}</td>
+          <td>
+            <span class="type-badge type-{{ payment.type }}">{{ typeMap[payment.type] }}</span>
+          </td>
+          <td><strong>$ {{ payment.amount | number:'1.2-2' }}</strong></td>
+          <td>{{ payment.payment_method || '-' }}</td>
+          <td>
+            <span class="badge badge-pay-{{ payment.status }}">{{ statusMap[payment.status] }}</span>
+          </td>
+          <td class="notes-cell">{{ payment.reference || '-' }}</td>
+          <td>{{ payment.created_at | date:'dd/MM/yy HH:mm' }}</td>
+          <td class="actions-cell">
+            <button class="btn-icon delete" (click)="deletePayment(payment)" title="Eliminar">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #noData>
+      <div class="empty-state">
+        <span class="empty-icon">💳</span>
+        <p>No hay pagos registrados</p>
+        <button class="btn btn-primary" (click)="openCreate()">Registrar primer pago</button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
+<div class="modal" *ngIf="showModal">
+  <div class="modal-header">
+    <h2>Registrar Pago</h2>
+    <button class="modal-close" (click)="closeModal()">✕</button>
+  </div>
+  <form [formGroup]="paymentForm" (ngSubmit)="submit()" class="modal-body">
+    <div class="form-group">
+      <label>ID del Hospedaje *</label>
+      <input type="number" formControlName="stay_id" class="form-control" placeholder="Ej: 1" />
+    </div>
+    <div class="form-group">
+      <label>Monto *</label>
+      <input type="number" formControlName="amount" class="form-control" min="0.01" step="0.01" placeholder="0.00" />
+    </div>
+    <div class="form-group">
+      <label>Tipo de Pago *</label>
+      <select formControlName="type" class="form-control">
+        <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Método de Pago</label>
+      <select formControlName="payment_method" class="form-control">
+        <option *ngFor="let m of methodOptions" [value]="m">{{ m }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Referencia / Comprobante</label>
+      <input type="text" formControlName="reference" class="form-control" placeholder="Nro. de transacción, recibo..." />
+    </div>
+    <div class="form-group">
+      <label>Notas</label>
+      <textarea formControlName="notes" rows="3" class="form-control"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancelar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="paymentForm.invalid || submitting">
+        {{ submitting ? 'Registrando...' : 'Registrar Pago' }}
+      </button>
+    </div>
+  </form>
+</div>
