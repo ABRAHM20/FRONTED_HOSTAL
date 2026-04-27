@@ -1,7 +1,19 @@
 <header class="navbar">
-  <div class="brand">Hotel Suite</div>
-  <nav class="links">
-    <a routerLink="/users">Usuarios</a>
-    <button type="button" (click)="onLogout()">Salir</button>
-  </nav>
+  <div class="brand">
+    <div class="brand-mark">HS</div>
+    <div class="brand-text">
+      <span class="brand-title">Hotel Suite</span>
+      <span class="brand-subtitle">Panel administrativo</span>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <div class="user-card" *ngIf="currentUser$ | async as user">
+      <div class="avatar">{{ getInitials(user) }}</div>
+      <div class="user-meta">
+        <span class="user-name">{{ getDisplayName(user) }}</span>
+        <span class="user-role">{{ getRoleLabel(user) }}</span>
+      </div>
+    </div>
+    <button type="button" class="logout-button" (click)="onLogout()">Salir</button>
+  </div>
 </header>

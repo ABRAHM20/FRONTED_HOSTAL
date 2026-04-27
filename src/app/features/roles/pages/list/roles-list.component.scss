@@ -1,82 +1,4 @@
-.roles-container {
-  padding: 24px;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border-radius: 12px;
-  color: #f5f2ed;
-  min-height: 100vh;
-}
-
-.roles-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  gap: 16px;
-
-  h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin: 0;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-.btn-primary,
-.btn-sm,
-.btn-secondary,
-.btn-info,
-.btn-danger {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  text-decoration: none;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  margin-right: 8px;
-}
-
-.btn-secondary {
-  background: rgba(79, 172, 254, 0.2);
-  color: #4facfe;
-  border: 1px solid #4facfe;
-}
-
-.btn-info {
-  background: rgba(0, 242, 254, 0.2);
-  color: #00f2fe;
-  border: 1px solid #00f2fe;
-}
-
-.btn-danger {
-  background: rgba(255, 71, 87, 0.2);
-  color: #ff4757;
-  border: 1px solid #ff4757;
-}
+@use '../../../../../styles/hotel-shared';
 
 .error-alert {
   background: rgba(255, 71, 87, 0.1);
@@ -87,75 +9,22 @@
   margin-bottom: 16px;
 }
 
-.loading {
-  text-align: center;
-  padding: 32px;
-  color: rgba(245, 242, 237, 0.7);
+.badge-system {
+  background: rgba(59, 130, 246, 0.15);
+  color: #1d4ed8;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 64px 32px;
-  color: rgba(245, 242, 237, 0.5);
-  font-size: 16px;
+.badge-custom {
+  background: rgba(16, 185, 129, 0.15);
+  color: #047857;
 }
 
-.roles-table {
-  overflow-x: auto;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(31, 31, 31, 0.5);
-    border-radius: 12px;
-    overflow: hidden;
-
-    thead {
-      background: rgba(79, 172, 254, 0.1);
-      border-bottom: 2px solid rgba(79, 172, 254, 0.2);
-    }
-
-    th,
-    td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    th {
-      font-weight: 600;
-      color: rgba(245, 242, 237, 0.8);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    tr:hover {
-      background: rgba(79, 172, 254, 0.05);
-    }
-  }
+.btn-info {
+  border-color: #0ea5e9;
+  color: #0369a1;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-
-  &.badge-system {
-    background: rgba(79, 172, 254, 0.2);
-    color: #4facfe;
-  }
-
-  &.badge-custom {
-    background: rgba(0, 242, 254, 0.2);
-    color: #00f2fe;
-  }
+.btn-danger {
+  border-color: #ef4444;
+  color: #b91c1c;
 }

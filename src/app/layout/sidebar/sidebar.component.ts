@@ -4,14 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { CurrentUserService } from '../../core/services/current-user.service';
-
-interface CurrentUser {
-  id: number;
-  email: string;
-  full_name?: string;
-  permissions: string[];
-}
+import { CurrentUser, CurrentUserService } from '../../core/services/current-user.service';
 
 @Component({
   selector: 'app-sidebar',

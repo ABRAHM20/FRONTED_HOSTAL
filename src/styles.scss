@@ -1,7 +1,7 @@
 :root {
   color-scheme: light;
   font-family: "Work Sans", "Segoe UI", sans-serif;
-  background: radial-gradient(circle at top, #f5f3ef, #e6e2da 55%, #d2c9bc 100%);
+  background: #f5f3ef;
 }
 
 * {
@@ -11,7 +11,16 @@
 body {
   margin: 0;
   color: #1f1f1f;
-  background: transparent;
+  background-image: linear-gradient(
+      rgba(247, 244, 239, 0.92),
+      rgba(233, 226, 216, 0.86)
+    ),
+    url('/assets/branding/logo.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 a {

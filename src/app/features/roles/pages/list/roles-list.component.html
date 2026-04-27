@@ -1,25 +1,31 @@
-<div class="roles-container">
-  <div class="roles-header">
-    <h1>Gestión de Roles</h1>
-    <button class="btn-primary" (click)="openCreateModal()" [disabled]="loading">
+<div class="page-wrapper">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Gestión de Roles</h1>
+      <p class="page-subtitle">Define permisos y control de acceso.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" (click)="openCreateModal()" [disabled]="loading">
       + Crear Rol
-    </button>
+      </button>
+    </div>
   </div>
 
   <div *ngIf="error" class="error-alert">
     {{ error }}
   </div>
 
-  <div *ngIf="loading" class="loading">
-    Cargando roles...
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Cargando roles...</span>
   </div>
 
   <div *ngIf="!loading && roles.length === 0" class="empty-state">
     <p>No hay roles creados</p>
   </div>
 
-  <div *ngIf="!loading && roles.length > 0" class="roles-table">
-    <table>
+  <div *ngIf="!loading && roles.length > 0" class="table-container">
+    <table class="data-table">
       <thead>
         <tr>
           <th>Nombre</th>
@@ -36,16 +42,16 @@
             <span *ngIf="role.is_system" class="badge badge-system">Sí</span>
             <span *ngIf="!role.is_system" class="badge badge-custom">No</span>
           </td>
-          <td class="actions">
-            <button class="btn-sm btn-secondary" (click)="openEditModal(role)">
+          <td class="actions-cell">
+            <button class="btn btn-secondary" (click)="openEditModal(role)">
               ✏️ Editar
             </button>
-            <button class="btn-sm btn-info" (click)="openPermissionsModal(role)">
+            <button class="btn btn-ghost btn-info" (click)="openPermissionsModal(role)">
               🔐 Permisos
             </button>
             <button
               *ngIf="!role.is_system"
-              class="btn-sm btn-danger"
+              class="btn btn-ghost btn-danger"
               (click)="deleteRole(role)"
             >
               🗑️ Eliminar

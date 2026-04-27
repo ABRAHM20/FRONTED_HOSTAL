@@ -1,89 +1,4 @@
-.users-container {
-  padding: 24px;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border-radius: 12px;
-  color: #f5f2ed;
-  min-height: 100vh;
-}
-
-.users-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32px;
-  gap: 16px;
-
-  h1 {
-    font-size: 28px;
-    font-weight: 600;
-    margin: 0;
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-.btn-primary,
-.btn-sm,
-.btn-secondary,
-.btn-warning,
-.btn-success,
-.btn-danger {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  text-decoration: none;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: #1a1a1a;
-  font-weight: 600;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 12px;
-  margin-right: 8px;
-}
-
-.btn-secondary {
-  background: rgba(79, 172, 254, 0.2);
-  color: #4facfe;
-  border: 1px solid #4facfe;
-}
-
-.btn-warning {
-  background: rgba(255, 159, 64, 0.2);
-  color: #ff9f40;
-  border: 1px solid #ff9f40;
-}
-
-.btn-success {
-  background: rgba(46, 213, 115, 0.2);
-  color: #2ed573;
-  border: 1px solid #2ed573;
-}
-
-.btn-danger {
-  background: rgba(255, 71, 87, 0.2);
-  color: #ff4757;
-  border: 1px solid #ff4757;
-}
+@use '../../../../../styles/hotel-shared';
 
 .error-alert {
   background: rgba(255, 71, 87, 0.1);
@@ -94,61 +9,6 @@
   margin-bottom: 16px;
 }
 
-.loading {
-  text-align: center;
-  padding: 32px;
-  color: rgba(245, 242, 237, 0.7);
-}
-
-.empty-state {
-  text-align: center;
-  padding: 64px 32px;
-  color: rgba(245, 242, 237, 0.5);
-  font-size: 16px;
-}
-
-.users-table {
-  overflow-x: auto;
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: rgba(31, 31, 31, 0.5);
-    border-radius: 12px;
-    overflow: hidden;
-
-    thead {
-      background: rgba(79, 172, 254, 0.1);
-      border-bottom: 2px solid rgba(79, 172, 254, 0.2);
-    }
-
-    th,
-    td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    th {
-      font-weight: 600;
-      color: rgba(245, 242, 237, 0.8);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    tr:hover {
-      background: rgba(79, 172, 254, 0.05);
-    }
-  }
-}
-
-.actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 .roles-list {
   display: flex;
   flex-wrap: wrap;
@@ -157,35 +17,32 @@
 
 .role-badge {
   display: inline-block;
-  background: rgba(0, 242, 254, 0.2);
-  color: #00f2fe;
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
   padding: 4px 8px;
-  border-radius: 4px;
+  border-radius: 999px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
 
   &.empty {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(245, 242, 237, 0.5);
+    background: rgba(0, 0, 0, 0.06);
+    color: rgba(0, 0, 0, 0.55);
   }
 }
 
-.badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
+.btn-warning {
+  border-color: #f59e0b;
+  color: #b45309;
+}
 
-  &.badge-active {
-    background: rgba(46, 213, 115, 0.2);
-    color: #2ed573;
-  }
+.btn-success {
+  border-color: #10b981;
+  color: #047857;
+}
 
-  &.badge-inactive {
-    background: rgba(255, 71, 87, 0.2);
-    color: #ff4757;
-  }
+.btn-danger {
+  border-color: #ef4444;
+  color: #b91c1c;
 }
 
 .pagination {
@@ -194,32 +51,9 @@
   justify-content: center;
   gap: 16px;
   margin-top: 24px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+}
 
-  .pagination-info {
-    font-size: 14px;
-    color: rgba(245, 242, 237, 0.7);
-  }
-
-  button {
-    padding: 8px 12px;
-    background: rgba(79, 172, 254, 0.2);
-    color: #4facfe;
-    border: 1px solid #4facfe;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s ease;
-
-    &:hover:not(:disabled) {
-      background: rgba(79, 172, 254, 0.3);
-    }
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  }
+.pagination-info {
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
 }

@@ -1,10 +1,22 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+
+import { environment } from '../../../environments/environment';
+import { TokenService } from './token.service';
+
+export interface RoleSimple {
+  id: number;
+  name: string;
+  description?: string | null;
+}
 
 export interface CurrentUser {
   id: number;
   email: string;
+  name?: string;
   full_name?: string;
+  roles?: RoleSimple[];
   permissions: string[];
 }
 
@@ -14,8 +26,9 @@ export interface CurrentUser {
 export class CurrentUserService {
   private currentUser$ = new BehaviorSubject<CurrentUser | null>(null);
 
-  constructor() {
+  constructor(private http: HttpClient, private tokenService: TokenService) {
     this.loadFromStorage();
+    this.refreshCurrentUser();
   }
 
   /**
@@ -23,8 +36,14 @@ export class CurrentUserService {
    */
   setCurrentUser(user: CurrentUser): void {
     console.log(`🔐 Usuario actual establecido: ${user.email}`, user.permissions);
-    this.currentUser$.next(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    const normalized = {
+      ...user,
+      name: user.name || user.full_name,
+      permissions: user.permissions || [],
+      roles: user.roles || [],
+    };
+    this.currentUser$.next(normalized);
+    localStorage.setItem('currentUser', JSON.stringify(normalized));
   }
 
   /**
@@ -101,5 +120,29 @@ export class CurrentUserService {
       console.error('❌ Error accediendo localStorage:', error);
       // Fallar silenciosamente, el usuario tendrá que hacer login
     }
+  }
+
+  private refreshCurrentUser(): void {
+    if (!this.tokenService.hasAccessToken()) {
+      return;
+    }
+
+    this.http.get<CurrentUser>(`${environment.apiUrl}/auth/me`).subscribe({
+      next: (user) => {
+        const existing = this.currentUser$.value;
+        const merged: CurrentUser = {
+          ...existing,
+          ...user,
+          name: user.name || user.full_name || existing?.name || existing?.full_name,
+          roles: user.roles && user.roles.length ? user.roles : existing?.roles || [],
+          permissions: existing?.permissions || [],
+        };
+        this.currentUser$.next(merged);
+        localStorage.setItem('currentUser', JSON.stringify(merged));
+      },
+      error: () => {
+        // Keep local cached user if refresh fails.
+      },
+    });
   }
 }

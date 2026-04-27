@@ -1,8 +1,8 @@
-<div class="modal-overlay" (click)="onClose()">
-  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+<div class="modal-backdrop" (click)="onClose()">
+  <div class="modal modal-large" (click)="$event.stopPropagation()">
     <div class="modal-header">
       <h2>Gestionar Permisos - {{ role.name }}</h2>
-      <button class="btn-close" (click)="onClose()">✕</button>
+      <button class="modal-close" (click)="onClose()">✕</button>
     </div>
 
     <div class="modal-body">
@@ -15,12 +15,13 @@
           type="text"
           [(ngModel)]="searchText"
           placeholder="Buscar permisos..."
-          class="search-input"
+          class="form-control"
         />
       </div>
 
-      <div *ngIf="loading" class="loading">
-        Cargando permisos...
+      <div *ngIf="loading" class="loading-state">
+        <div class="spinner"></div>
+        <span>Cargando permisos...</span>
       </div>
 
       <div *ngIf="!loading && permissions.length === 0" class="empty-state">
@@ -61,10 +62,10 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-secondary" (click)="onClose()" [disabled]="saving">
+      <button class="btn btn-secondary" (click)="onClose()" [disabled]="saving">
         Cerrar
       </button>
-      <button class="btn-primary" (click)="onSave()" [disabled]="saving">
+      <button class="btn btn-primary" (click)="onSave()" [disabled]="saving">
         {{ saving ? 'Guardando...' : 'Guardar Cambios' }}
       </button>
     </div>

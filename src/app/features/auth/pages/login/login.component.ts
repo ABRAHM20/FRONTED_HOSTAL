@@ -49,7 +49,9 @@ export class LoginComponent {
           this.currentUserService.setCurrentUser({
             id: response.user.id,
             email: response.user.email,
+            name: response.user.name || response.user.full_name,
             full_name: response.user.full_name,
+            roles: response.user.roles || [],
             permissions: response.user.permissions || [],
           });
           console.log(`📋 Permisos cargados: ${response.user.permissions?.join(', ') || 'ninguno'}`);
