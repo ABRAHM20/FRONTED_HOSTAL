@@ -6,12 +6,11 @@ import { takeUntil } from 'rxjs/operators';
 import { RoleService, Role, PaginatedResponse } from '../../../../core/services/role.service';
 import { AlertService } from '../../../../shared/alert/alert.service';
 import { RoleModalComponent } from '../modals/role-modal/role-modal.component';
-import { RolePermissionsModalComponent } from '../modals/role-permissions-modal/role-permissions-modal.component';
 
 @Component({
   selector: 'app-roles-list',
   standalone: true,
-  imports: [CommonModule, RoleModalComponent, RolePermissionsModalComponent],
+  imports: [CommonModule, RoleModalComponent],
   templateUrl: './roles-list.component.html',
   styleUrls: ['./roles-list.component.scss'],
 })
@@ -22,12 +21,9 @@ export class RolesListComponent implements OnInit, OnDestroy {
   skip = 0;
   limit = 20;
   total = 0;
-
   showRoleModal = false;
   editingRole: Role | null = null;
-
-  showPermissionsModal = false;
-  selectedRoleForPermissions: Role | null = null;
+  roleModalTab: 'basic' | 'permissions' = 'basic';
 
   private destroy$ = new Subject<void>();
 
@@ -65,17 +61,20 @@ export class RolesListComponent implements OnInit, OnDestroy {
 
   openCreateModal(): void {
     this.editingRole = null;
+    this.roleModalTab = 'basic';
     this.showRoleModal = true;
   }
 
   openEditModal(role: Role): void {
     this.editingRole = { ...role };
+    this.roleModalTab = 'permissions';
     this.showRoleModal = true;
   }
 
   closeRoleModal(): void {
     this.showRoleModal = false;
     this.editingRole = null;
+    this.roleModalTab = 'basic';
   }
 
   onRoleSaved(): void {
@@ -103,20 +102,5 @@ export class RolesListComponent implements OnInit, OnDestroy {
           },
         });
     }
-  }
-
-  openPermissionsModal(role: Role): void {
-    this.selectedRoleForPermissions = role;
-    this.showPermissionsModal = true;
-  }
-
-  closePermissionsModal(): void {
-    this.showPermissionsModal = false;
-    this.selectedRoleForPermissions = null;
-  }
-
-  onPermissionsSaved(): void {
-    this.closePermissionsModal();
-    this.loadRoles();
   }
 }

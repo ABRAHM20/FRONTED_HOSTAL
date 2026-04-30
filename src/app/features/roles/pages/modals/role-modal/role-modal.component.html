@@ -1,52 +1,156 @@
 <div class="modal-backdrop" (click)="onClose()">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>{{ isEditing ? 'Editar Rol' : 'Crear Nuevo Rol' }}</h2>
+      <div class="modal-title">
+        <span class="title-icon">+</span>
+        <div>
+          <h2>{{ isEditing ? 'Editar Rol' : 'Agregar Rol' }}</h2>
+          <p>Completa los datos basicos del rol.</p>
+        </div>
+      </div>
       <button class="modal-close" (click)="onClose()">✕</button>
     </div>
 
+    <div class="modal-tabs">
+      <button
+        type="button"
+        class="tab"
+        [class.active]="activeTab === 'basic'"
+        (click)="setActiveTab('basic')"
+      >
+        Datos Basicos
+      </button>
+      <button
+        type="button"
+        class="tab"
+        [class.active]="activeTab === 'permissions'"
+        (click)="setActiveTab('permissions')"
+        [disabled]="!isEditing"
+      >
+        Permisos Avanzados
+      </button>
+    </div>
+
     <div class="modal-body">
-      <div *ngIf="error" class="error-alert">
-        {{ error }}
+      <div *ngIf="activeTab === 'basic'">
+        <div *ngIf="error" class="error-alert">
+          {{ error }}
+        </div>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="name">Nombre del Rol *</label>
+            <input
+              id="name"
+              type="text"
+              [(ngModel)]="formData.name"
+              name="name"
+              placeholder="ej. Moderador"
+              required
+              [disabled]="loading"
+              class="form-control"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Descripción</label>
+            <textarea
+              id="description"
+              [(ngModel)]="formData.description"
+              name="description"
+              placeholder="Descripción del rol"
+              [disabled]="loading"
+              rows="4"
+              class="form-control"
+            ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="loading">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar Rol' }}
+            </button>
+          </div>
+        </form>
       </div>
 
-      <form (ngSubmit)="onSubmit()">
-        <div class="form-group">
-          <label for="name">Nombre del Rol *</label>
-          <input
-            id="name"
-            type="text"
-            [(ngModel)]="formData.name"
-            name="name"
-            placeholder="ej. Moderador"
-            required
-            [disabled]="loading"
-            class="form-control"
-          />
+      <div *ngIf="activeTab === 'permissions'">
+        <div *ngIf="!isEditing" class="permissions-info">
+          Guarda el rol para asignar permisos.
         </div>
 
-        <div class="form-group">
-          <label for="description">Descripción</label>
-          <textarea
-            id="description"
-            [(ngModel)]="formData.description"
-            name="description"
-            placeholder="Descripción del rol"
-            [disabled]="loading"
-            rows="4"
-            class="form-control"
-          ></textarea>
-        </div>
+        <div *ngIf="isEditing">
+          <div *ngIf="permissionsError" class="error-alert">
+            {{ permissionsError }}
+          </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="onClose()" [disabled]="loading">
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary" [disabled]="loading">
-            {{ loading ? 'Guardando...' : 'Guardar Rol' }}
-          </button>
+          <div class="permissions-controls">
+            <input
+              type="text"
+              [(ngModel)]="searchText"
+              placeholder="Buscar permisos..."
+              class="form-control"
+            />
+          </div>
+
+          <div *ngIf="permissionsLoading" class="loading-state">
+            <div class="spinner"></div>
+            <span>Cargando permisos...</span>
+          </div>
+
+          <div *ngIf="!permissionsLoading && permissions.length === 0" class="empty-state">
+            <p>No hay permisos disponibles</p>
+          </div>
+
+          <div *ngIf="!permissionsLoading && permissions.length > 0" class="permissions-list">
+            <div *ngFor="let resource of getGroupedPermissions() | keyvalue" class="resource-group">
+              <div class="resource-header" (click)="toggleResourceExpand(resource.key)">
+                <div class="resource-title">
+                  <span class="resource-name">{{ resource.key }}</span>
+                  <span class="resource-count">
+                    {{ getAssignedCount(resource.value) }}/{{ resource.value.length }}
+                  </span>
+                </div>
+                <div class="resource-actions">
+                  <button type="button" class="resource-all" disabled>Todos</button>
+                  <span class="expand-icon" [class.expanded]="isResourceExpanded(resource.key)">▼</span>
+                </div>
+              </div>
+
+              <div *ngIf="isResourceExpanded(resource.key)" class="permissions-group">
+                <div
+                  *ngFor="let permission of resource.value"
+                  class="permission-item"
+                  [class.assigned]="permission.assigned"
+                  [class.not-assigned]="!permission.assigned"
+                  (click)="togglePermission(permission)"
+                >
+                  <div class="permission-checkbox">
+                    <span class="checkbox-custom" [class.checked]="permission.assigned"></span>
+                    <span class="permission-label">
+                      <span class="permission-name">{{ permission.name }}</span>
+                      <span *ngIf="permission.display_name" class="permission-display">
+                        {{ permission.display_name }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="onClose()">
+              Cerrar
+            </button>
+            <button type="button" class="btn btn-primary" (click)="onPermissionsDone()">
+              Guardar Cambios
+            </button>
+          </div>
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </div>

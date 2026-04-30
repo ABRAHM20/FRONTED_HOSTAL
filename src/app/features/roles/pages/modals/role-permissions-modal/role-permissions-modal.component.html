@@ -1,8 +1,19 @@
 <div class="modal-backdrop" (click)="onClose()">
   <div class="modal modal-large" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h2>Gestionar Permisos - {{ role.name }}</h2>
+      <div class="modal-title">
+        <span class="title-icon">+</span>
+        <div>
+          <h2>Permisos del Rol</h2>
+          <p>Asignar permisos avanzados para {{ role.name }}</p>
+        </div>
+      </div>
       <button class="modal-close" (click)="onClose()">✕</button>
+    </div>
+
+    <div class="modal-tabs">
+      <button type="button" class="tab" disabled>Datos Basicos</button>
+      <button type="button" class="tab active">Permisos Avanzados</button>
     </div>
 
     <div class="modal-body">
@@ -31,8 +42,16 @@
       <div *ngIf="!loading && permissions.length > 0" class="permissions-list">
         <div *ngFor="let resource of getGroupedPermissions() | keyvalue" class="resource-group">
           <div class="resource-header" (click)="toggleResourceExpand(resource.key)">
-            <span class="resource-name">{{ resource.key }}</span>
-            <span class="expand-icon" [class.expanded]="isResourceExpanded(resource.key)">▼</span>
+            <div class="resource-title">
+              <span class="resource-name">{{ resource.key }}</span>
+              <span class="resource-count">
+                {{ getAssignedCount(resource.value) }}/{{ resource.value.length }}
+              </span>
+            </div>
+            <div class="resource-actions">
+              <button type="button" class="resource-all" disabled>Todos</button>
+              <span class="expand-icon" [class.expanded]="isResourceExpanded(resource.key)">▼</span>
+            </div>
           </div>
 
           <div *ngIf="isResourceExpanded(resource.key)" class="permissions-group">

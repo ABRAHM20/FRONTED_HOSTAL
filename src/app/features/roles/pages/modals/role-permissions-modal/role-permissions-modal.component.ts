@@ -171,6 +171,10 @@ export class RolePermissionsModalComponent implements OnInit, OnDestroy {
     return grouped;
   }
 
+  getAssignedCount(permissions: PermissionWithStatus[]): number {
+    return permissions.filter((permission) => permission.assigned).length;
+  }
+
   onClose(): void {
     this.close.emit();
   }

@@ -1,80 +1,82 @@
 <div class="page-wrapper">
   <div class="page-header">
-    <div>
-      <h1 class="page-title">Gestión de Roles</h1>
-      <p class="page-subtitle">Define permisos y control de acceso.</p>
+    <div class="header-text">
+      <div class="title-row">
+        <h2 class="page-title">Gestionar Roles</h2>
+        <span class="count-badge">{{ total || roles.length }} roles</span>
+      </div>
+      <p class="page-subtitle">
+        Crear y modificar roles, controlando los accesos y funciones disponibles para cada usuario.
+      </p>
     </div>
     <div class="header-actions">
-      <button class="btn btn-primary" (click)="openCreateModal()" [disabled]="loading">
-      + Crear Rol
+      <button class="add-button" (click)="openCreateModal()">
+        <span class="add-icon">+</span>
+        Agregar
       </button>
     </div>
   </div>
 
-  <div *ngIf="error" class="error-alert">
-    {{ error }}
+  <div *ngIf="loading" class="loading-indicator">
+    <p>Cargando roles...</p>
   </div>
 
-  <div *ngIf="loading" class="loading-state">
-    <div class="spinner"></div>
-    <span>Cargando roles...</span>
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && roles.length > 0" class="roles-grid">
+    <article *ngFor="let role of roles" class="role-card">
+      <div class="card-top">
+        <div class="role-icon">
+          <i class="fas fa-user-shield"></i>
+        </div>
+        <div class="role-meta">
+          <h3 class="role-name">{{ role.name }}</h3>
+          <span class="role-id">ID: {{ role.id }}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="section-title">Informacion del rol</span>
+        <p class="role-description">{{ role.description || 'Sin descripcion.' }}</p>
+        <div class="permissions-pill">
+          <span class="pill-count">{{ role.permissions?.length || 0 }}</span>
+          <span class="pill-label">permisos</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="icon-btn edit" (click)="openEditModal(role)" title="Editar">
+          <i class="fas fa-pen"></i>
+          <span class="btn-letter">E</span>
+        </button>
+        <button
+          class="icon-btn delete"
+          (click)="deleteRole(role)"
+          [disabled]="role.is_system"
+          title="Eliminar"
+        >
+          <i class="fas fa-trash"></i>
+          <span class="btn-letter">X</span>
+        </button>
+      </div>
+    </article>
   </div>
 
   <div *ngIf="!loading && roles.length === 0" class="empty-state">
-    <p>No hay roles creados</p>
-  </div>
-
-  <div *ngIf="!loading && roles.length > 0" class="table-container">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Sistema</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let role of roles">
-          <td>{{ role.name }}</td>
-          <td>{{ role.description || '-' }}</td>
-          <td>
-            <span *ngIf="role.is_system" class="badge badge-system">Sí</span>
-            <span *ngIf="!role.is_system" class="badge badge-custom">No</span>
-          </td>
-          <td class="actions-cell">
-            <button class="btn btn-secondary" (click)="openEditModal(role)">
-              ✏️ Editar
-            </button>
-            <button class="btn btn-ghost btn-info" (click)="openPermissionsModal(role)">
-              🔐 Permisos
-            </button>
-            <button
-              *ngIf="!role.is_system"
-              class="btn btn-ghost btn-danger"
-              (click)="deleteRole(role)"
-            >
-              🗑️ Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <h3>No se encontraron roles</h3>
+    <p>Crea tu primer rol para empezar a gestionar los permisos.</p>
+    <button class="btn btn-primary" (click)="openCreateModal()">
+      Crear Rol
+    </button>
   </div>
 </div>
 
-<!-- Role Modal (Create/Edit) -->
+<!-- Modals -->
 <app-role-modal
   *ngIf="showRoleModal"
   [role]="editingRole"
+  [initialTab]="roleModalTab"
   (close)="closeRoleModal()"
   (save)="onRoleSaved()"
 ></app-role-modal>
 
-<!-- Role Permissions Modal -->
-<app-role-permissions-modal
-  *ngIf="showPermissionsModal && selectedRoleForPermissions"
-  [role]="selectedRoleForPermissions"
-  (close)="closePermissionsModal()"
-  (save)="onPermissionsSaved()"
-></app-role-permissions-modal>

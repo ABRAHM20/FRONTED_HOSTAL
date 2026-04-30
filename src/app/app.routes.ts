@@ -68,13 +68,6 @@ export const appRoutes: Routes = [
           import('./features/auth/pages/login/login.component').then((m) => m.LoginComponent),
       },
       {
-        path: 'register',
-        loadComponent: () =>
-          import('./features/auth/pages/register/register.component').then(
-            (m) => m.RegisterComponent
-          ),
-      },
-      {
         path: 'access-denied',
         loadComponent: () =>
           import('./features/auth/pages/access-denied/access-denied.component').then(
